@@ -1,0 +1,107 @@
+/* Estilos para el título principal */
+.sub-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 16px;
+  position: relative;
+  
+}
+
+.main-title {
+  color: #C10230;
+  margin-left: 3.5vh;
+  text-align: left;
+}
+
+.main-title_ {
+  color: #C10230;
+  margin-left: 20%;
+  margin-right: 3.5vh;
+  text-align: right;
+}
+
+.main-title-rut {
+  color: #C10230;
+  margin-left: 3.5vh;
+  text-align: left;
+}
+
+.main-title-rut_ {
+  color: #C10230;
+  margin-left: 20%;
+  margin-right: 3.5vh;
+  text-align: right;
+}
+
+/* Estilos para IonSelect */
+ion-select {
+  color: #C10230;
+  width: 100%;
+  max-width: 100%;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 13px;
+  --padding-bottom: 13px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+ion-select::part(icon) {
+  color: #C10230;
+  opacity: 1;
+}
+
+ion-select::part(text) {
+  color: #C10230;
+}
+
+/* Cards de calendario y horarios */
+.calendario-card, 
+.horarios-card {
+  margin: 16px;
+}
+
+/* Header personalizado */
+.custom-header {
+  background: white;
+}
+
+.custom-header ion-toolbar {
+  --background: white;
+}
+
+/* Para pantallas pequeñas */
+@media (max-width: 344px) {
+  .sub-title {
+    max-width: 330px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .main-title {
+    color: #C10230;
+  }
+
+  .main-title_ {
+    color: #C10230;
+  }
+}
+
+/* Material Design styles */
+ion-segment-button.md::part(native) {
+  color: #000;
+}
+
+
+ion-segment-button.md::part(indicator-background) {
+  height: 4px;
+}
+
+/* iOS styles */
+.segment-button-checked.ios::part(native) {
+  color: #fff;
+}
+
+ion-segment-button.ios::part(indicator-background) {
+  border-radius: 20px;
+}
