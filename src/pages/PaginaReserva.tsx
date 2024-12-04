@@ -70,14 +70,10 @@ const PaginaReserva: React.FC = () => {
 
   // Efecto para inicializar deportes cuando cambian los campus
   useEffect(() => {
-    if (campuses.length > 0 && !state.campusSeleccionado) {
-      setState(prev => ({
-        ...prev,
-        deportesDisponibles: [],
-        servicioSeleccionado: ''
-      }));
+    if (state.servicioSeleccionado && state.step === 3) {
+      handleFechaChange(new Date());
     }
-  }, [campuses]);
+  }, [state.servicioSeleccionado]);
 
   // Formatea una fecha a string en formato local español
   const formatDate = (dateString: string) => {
@@ -103,7 +99,7 @@ const PaginaReserva: React.FC = () => {
   const loadHistorial = async () => {
     setState(prev => ({ ...prev, loadingHistorial: true, errorHistorial: null }));
     try {
-      const data = await getReservasByRun(rut);
+      const data = await getReservasByRun(rut.toString());
       const today = new Date().toISOString().split('T')[0];
       
       const filteredData = data
@@ -203,16 +199,28 @@ const PaginaReserva: React.FC = () => {
           sport_id: 1
         })
       });
-
+  
       if (!response.ok) throw new Error('Error en la petición');
-
+  
       const responseData: ApiResponse = await response.json();
       
       if (responseData.status === 200 && Array.isArray(responseData.data)) {
+        const now = new Date();
+        const today = now.toDateString();
+        const selectedDate = fecha.toDateString();
+        
         const horariosDelDia = responseData.data.filter(horario => {
           const horarioDate = new Date(horario.calendar_date);
-          return horarioDate.toDateString() === fecha.toDateString() &&
-                 horario.court_name.toLowerCase().includes(state.servicioSeleccionado.toLowerCase());
+          const perteneceAlServicio = horario.court_name.toLowerCase().includes(state.servicioSeleccionado.toLowerCase());
+          
+          if (selectedDate === today) {
+            const [hora, minutos] = horario.start.split(':');
+            const horaHorario = parseInt(hora) * 60 + parseInt(minutos);
+            const horaActual = now.getHours() * 60 + now.getMinutes();
+            return horarioDate.toDateString() === selectedDate && horaHorario > horaActual && perteneceAlServicio;
+          } else {
+            return horarioDate.toDateString() === selectedDate && perteneceAlServicio;
+          }
         });
         setState(prev => ({ ...prev, horarios: horariosDelDia }));
       }
@@ -426,7 +434,7 @@ const PaginaReserva: React.FC = () => {
               </IonCard>
             )}
 
-            {state.step >= 4 && (
+            {state.step >= 3 && (
               <IonCard className="horarios-card">
                 <IonCardHeader>
                   <IonCardTitle>Selecciona un horario</IonCardTitle>
@@ -545,6 +553,26 @@ const PaginaReserva: React.FC = () => {
                                 <IonLabel>
                                   <h1>Hora Termino</h1>
                                   <p>{reserva.finish}</p>
+                                </IonLabel>
+                              </IonItem>
+                            </IonCol>
+                          </IonRow>
+
+                          <IonRow>
+                            <IonCol size="12">
+                              <IonItem lines="none">
+                                <IonIcon 
+                                  icon={reserva.state ? checkmarkOutline : closeCircleOutline} 
+                                  slot="start"
+                                  color={reserva.state ? "success" : "danger"}
+                                />
+                                <IonLabel>
+                                  <h1>Estado</h1>
+                                  <p style={{ 
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {reserva.state ? "Activa" : "Cancelada"}
+                                  </p>
                                 </IonLabel>
                               </IonItem>
                             </IonCol>
